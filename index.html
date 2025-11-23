@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MRMINOR LLC - Expense Entry</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 12px;
+            padding: 32px;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        
+        h1 {
+            font-size: 24px;
+            margin-bottom: 8px;
+            color: #1a202c;
+        }
+        
+        .subtitle {
+            color: #718096;
+            font-size: 14px;
+            margin-bottom: 24px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600;
+            color: #2d3748;
+            font-size: 14px;
+        }
+        
+        label .required {
+            color: #e53e3e;
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: inherit;
+            transition: border-color 0.2s;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+        
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .checkbox-group input[type="checkbox"] {
+            width: auto;
+        }
+        
+        .recurring-frequency {
+            margin-top: 12px;
+            display: none;
+        }
+        
+        .recurring-frequency.show {
+            display: block;
+        }
+        
+        button {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .alert {
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            display: none;
+        }
+        
+        .alert.show {
+            display: block;
+        }
+        
+        .alert-success {
+            background: #c6f6d5;
+            color: #22543d;
+            border: 1px solid #9ae6b4;
+        }
+        
+        .alert-error {
+            background: #fed7d7;
+            color: #742a2a;
+            border: 1px solid #fc8181;
+        }
+        
+        .help-text {
+            font-size: 12px;
+            color: #718096;
+            margin-top: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>💰 Expense Entry</h1>
+        <p class="subtitle">MRMINOR LLC - TopGearTest.com</p>
+        
+        <div id="alert" class="alert"></div>
+        
+        <form id="expenseForm">
+            <div class="form-group">
+                <label for="vendor">Vendor <span class="required">*</span></label>
+                <input 
+                    type="text" 
+                    id="vendor" 
+                    name="vendor" 
+                    required 
+                    placeholder="e.g., Anthropic, Cloudflare, Northwest RA"
+                    maxlength="255"
+                >
+            </div>
+            
+            <div class="form-group">
+                <label for="amount">Amount <span class="required">*</span></label>
+                <input 
+                    type="number" 
+                    id="amount" 
+                    name="amount" 
+                    required 
+                    step="0.01" 
+                    min="0.01"
+                    placeholder="0.00"
+                >
+                <p class="help-text">Do not include $ symbol</p>
+            </div>
+            
+            <div class="form-group">
+                <label for="category">Category <span class="required">*</span></label>
+                <select id="category" name="category" required>
+                    <option value="">Select a category...</option>
+                    <option value="software">Software (Line 22 - Supplies)</option>
+                    <option value="hosting">Hosting (Line 18 - Office expense)</option>
+                    <option value="services">Services (Line 11/17 - Contract/Professional)</option>
+                    <option value="tools">Tools (Line 22 - Supplies)</option>
+                    <option value="advertising">Advertising (Line 8)</option>
+                    <option value="legal">Legal (Line 17 - Legal/Professional)</option>
+                    <option value="tax">Tax (Line 23 - Taxes and licenses)</option>
+                    <option value="other">Other (Line 27a - Requires description)</option>
+                </select>
+                <p class="help-text">IRS Schedule C category</p>
+            </div>
+            
+            <div class="form-group">
+                <label for="expense_date">Expense Date <span class="required">*</span></label>
+                <input 
+                    type="date" 
+                    id="expense_date" 
+                    name="expense_date" 
+                    required
+                >
+                <p class="help-text">Date of purchase or invoice date</p>
+            </div>
+            
+            <div class="form-group">
+                <label for="payment_method">Payment Method</label>
+                <select id="payment_method" name="payment_method">
+                    <option value="">Select payment method...</option>
+                    <option value="credit_card">Credit Card</option>
+                    <option value="bank_transfer">Bank Transfer</option>
+                    <option value="paypal">PayPal</option>
+                    <option value="other">Other</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <div class="checkbox-group">
+                    <input 
+                        type="checkbox" 
+                        id="recurring" 
+                        name="recurring"
+                    >
+                    <label for="recurring" style="margin-bottom: 0;">Recurring expense?</label>
+                </div>
+                
+                <div id="recurring-frequency-group" class="recurring-frequency">
+                    <label for="recurring_frequency">Frequency</label>
+                    <select id="recurring_frequency" name="recurring_frequency">
+                        <option value="">Select frequency...</option>
+                        <option value="monthly">Monthly</option>
+                        <option value="quarterly">Quarterly</option>
+                        <option value="annually">Annually</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="notes">Notes</label>
+                <textarea 
+                    id="notes" 
+                    name="notes" 
+                    placeholder="Additional details (optional)"
+                    maxlength="500"
+                ></textarea>
+                <p class="help-text">Required for expenses >$1,000</p>
+            </div>
+            
+            <button type="submit" id="submitBtn">Log Expense</button>
+        </form>
+    </div>
+    
+    <script>
+        // Webhook URL - UPDATE THIS WITH ACTUAL n8n WEBHOOK URL
+        const WEBHOOK_URL = 'https://mrminorllc.app.n8n.cloud/webhook/expense-entry';
+        
+        // Set default expense date to today
+        document.getElementById('expense_date').valueAsDate = new Date();
+        
+        // Show/hide recurring frequency field
+        document.getElementById('recurring').addEventListener('change', function(e) {
+            const frequencyGroup = document.getElementById('recurring-frequency-group');
+            if (e.target.checked) {
+                frequencyGroup.classList.add('show');
+            } else {
+                frequencyGroup.classList.remove('show');
+                document.getElementById('recurring_frequency').value = '';
+            }
+        });
+        
+        // Form submission
+        document.getElementById('expenseForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const submitBtn = document.getElementById('submitBtn');
+            const alert = document.getElementById('alert');
+            
+            // Disable submit button
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Logging...';
+            
+            // Hide previous alerts
+            alert.classList.remove('show');
+            
+            // Collect form data
+            const formData = {
+                vendor: document.getElementById('vendor').value.trim(),
+                amount: parseFloat(document.getElementById('amount').value),
+                category: document.getElementById('category').value,
+                expense_date: document.getElementById('expense_date').value,
+                payment_method: document.getElementById('payment_method').value || null,
+                recurring: document.getElementById('recurring').checked,
+                recurring_frequency: document.getElementById('recurring').checked ? 
+                    document.getElementById('recurring_frequency').value || null : null,
+                notes: document.getElementById('notes').value.trim()
+            };
+            
+            // Validate amount >$1000 requires notes
+            if (formData.amount > 1000 && !formData.notes) {
+                showAlert('Expenses over $1,000 require notes for IRS audit trail', 'error');
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Log Expense';
+                return;
+            }
+            
+            // Validate "other" category requires notes
+            if (formData.category === 'other' && !formData.notes) {
+                showAlert('"Other" category requires description in notes', 'error');
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Log Expense';
+                return;
+            }
+            
+            try {
+                // Submit to webhook
+                const response = await fetch(WEBHOOK_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    // Success
+                    showAlert(
+                        `✅ Expense logged! ${formData.vendor} - $${formData.amount}\\n` +
+                        `Month total: $${result.month_total.toFixed(2)} / $${result.budget_limit.toFixed(2)} (${result.percent_used}%)`,
+                        'success'
+                    );
+                    
+                    // Reset form
+                    document.getElementById('expenseForm').reset();
+                    document.getElementById('expense_date').valueAsDate = new Date();
+                    document.getElementById('recurring-frequency-group').classList.remove('show');
+                } else {
+                    // Error from server
+                    showAlert(
+                        `❌ Error: ${result.error || result.message || 'Failed to log expense'}`,
+                        'error'
+                    );
+                }
+            } catch (error) {
+                showAlert(
+                    `❌ Network error: ${error.message}`,
+                    'error'
+                );
+            } finally {
+                // Re-enable submit button
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Log Expense';
+            }
+        });
+        
+        function showAlert(message, type) {
+            const alert = document.getElementById('alert');
+            alert.textContent = message;
+            alert.className = `alert alert-${type} show`;
+            
+            // Auto-hide success alerts after 5 seconds
+            if (type === 'success') {
+                setTimeout(() => {
+                    alert.classList.remove('show');
+                }, 5000);
+            }
+        }
+    </script>
+</body>
+</html>
